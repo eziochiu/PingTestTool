@@ -84,7 +84,7 @@
 - (instancetype)initWithAddress:(NSString *)address {
     self = [super init];
     if (self) {
-        self.timeoutMilliseconds = 500;
+        self.timeoutMilliseconds = 3000;
         self.maximumPingTimes = 100;
         self.address = address;
         self.simplePing = [[STSimplePing alloc] initWithHostName:address];
