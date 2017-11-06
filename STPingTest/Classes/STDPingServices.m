@@ -56,7 +56,7 @@
 }
 @end
 
-@interface STDPingServices () <STSimplePingDelegate> {
+@interface STDPingServices () <SimplePingDelegate> {
     BOOL _hasStarted;
     BOOL _isTimeout;
     NSInteger   _repingTimes;
@@ -65,7 +65,7 @@
 }
 
 @property(nonatomic, copy)   NSString   *address;
-@property(nonatomic, strong) STSimplePing *simplePing;
+@property(nonatomic, strong) SimplePing *simplePing;
 
 @property(nonatomic, strong)void(^callbackHandler)(STDPingItem *item, NSArray *pingItems);
 
@@ -87,8 +87,8 @@
         self.timeoutMilliseconds = 3000;
         self.maximumPingTimes = 100;
         self.address = address;
-        self.simplePing = [[STSimplePing alloc] initWithHostName:address];
-        self.simplePing.addressStyle = STSimplePingAddressStyleAny;
+        self.simplePing = [[SimplePing alloc] initWithHostName:address];
+        self.simplePing.addressStyle = SimplePingAddressStyleAny;
         self.simplePing.delegate = self;
         _pingItems = [NSMutableArray arrayWithCapacity:10];
     }
@@ -146,7 +146,7 @@
     }
 }
 
-- (void)st_simplePing:(STSimplePing *)pinger didStartWithAddress:(NSData *)address {
+- (void)simplePing:(SimplePing *)pinger didStartWithAddress:(NSData *)address {
     NSData *packet = [pinger packetWithPingData:nil];
     if (!_hasStarted) {
         STDPingItem *pingItem = [[STDPingItem alloc] init];
@@ -170,11 +170,11 @@
 // On the receive side, it does.  In that case, use +[SimplePing icmpInPacket:]
 // to find the ICMP header within the packet.
 
-- (void)st_simplePing:(STSimplePing *)pinger didSendPacket:(NSData *)packet sequenceNumber:(uint16_t)sequenceNumber {
+- (void)simplePing:(SimplePing *)pinger didSendPacket:(NSData *)packet sequenceNumber:(uint16_t)sequenceNumber {
     _sequenceNumber = sequenceNumber;
 }
 
-- (void)st_simplePing:(STSimplePing *)pinger didFailToSendPacket:(NSData *)packet sequenceNumber:(uint16_t)sequenceNumber error:(NSError *)error {
+- (void)simplePing:(SimplePing *)pinger didFailToSendPacket:(NSData *)packet sequenceNumber:(uint16_t)sequenceNumber error:(NSError *)error {
     [[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(_timeoutActionFired) object:nil];
     _sequenceNumber = sequenceNumber;
     STDPingItem *pingItem = [[STDPingItem alloc] init];
@@ -184,7 +184,7 @@
     [self _handlePingItem:pingItem];
 }
 
-- (void)st_simplePing:(STSimplePing *)pinger didReceiveUnexpectedPacket:(NSData *)packet {
+- (void)simplePing:(SimplePing *)pinger didReceiveUnexpectedPacket:(NSData *)packet {
     [[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(_timeoutActionFired) object:nil];
     STDPingItem *pingItem = [[STDPingItem alloc] init];
     pingItem.ICMPSequence = _sequenceNumber;
@@ -193,7 +193,7 @@
 //    [self _handlePingItem:pingItem];
 }
 
-- (void)st_simplePing:(STSimplePing *)pinger didReceivePingResponsePacket:(NSData *)packet timeToLive:(NSInteger)timeToLive sequenceNumber:(uint16_t)sequenceNumber timeElapsed:(NSTimeInterval)timeElapsed {
+- (void)simplePing:(SimplePing *)pinger didReceivePingResponsePacket:(NSData *)packet timeToLive:(NSInteger)timeToLive sequenceNumber:(uint16_t)sequenceNumber timeElapsed:(NSTimeInterval)timeElapsed {
     [[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(_timeoutActionFired) object:nil];
     STDPingItem *pingItem = [[STDPingItem alloc] init];
     pingItem.IPAddress = pinger.IPAddress;
@@ -206,7 +206,7 @@
     [self _handlePingItem:pingItem];
 }
 
-- (void)st_simplePing:(STSimplePing *)pinger didFailWithError:(NSError *)error {
+- (void)simplePing:(SimplePing *)pinger didFailWithError:(NSError *)error {
     [[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(_timeoutActionFired) object:nil];
     [self.simplePing stop];
     

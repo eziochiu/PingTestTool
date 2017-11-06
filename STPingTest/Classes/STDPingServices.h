@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
-#import "STSimplePing.h"
+#import "SimplePing.h"
 
 typedef NS_ENUM(NSInteger, STDPingStatus) {
     STDPingStatusDidStart,
